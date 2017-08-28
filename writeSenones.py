@@ -148,7 +148,12 @@ def getPredsFromFilelist(model,filelist,file_dir,file_ext,
 		if v:
 			print "Prediction size:",data.shape
 		#Since passing only single utterance, shouldn't need padding
-		preds = model.predict(data,batch_size=data.shape[0])
+		preds = model.predict(data,batch_size=1)
+		#preds = [np.argmax(x) for x in preds[0]]
+		print preds[0].shape
+		for k in range(1,len(preds)):
+			pred[k-1]=pred[k]
+		#preds = model.predict(data,batch_size=data.shape[0])
 		data_postproc_fn = lambda x: x[:,range(138)] / np.sum(x[:,range(138)], axis=1).reshape(-1,1)
 		preds=data_postproc_fn(preds[0])
 		res_file_path = res_dir+"/"+files[i]+res_ext
